@@ -45,6 +45,7 @@ export function computeLayout(
     }
   });
   if (watermark) {
+    if (items.length > 0) gutters.push({ start: y, end: y }); // zero-width cut hint: forces clean cut at banner top
     items.push({ y, height: WATERMARK_HEIGHT, scale: 1 });
     y += WATERMARK_HEIGHT;
   }

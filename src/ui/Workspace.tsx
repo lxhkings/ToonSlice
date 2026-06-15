@@ -50,7 +50,8 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
     const layout = computeLayout(
       items.map((it) => it.size),
       spec.canvasWidth,
-      gutter
+      gutter,
+      watermark
     );
     const tooTall = checkTotalHeight(layout.totalHeight);
     if (tooTall) {
