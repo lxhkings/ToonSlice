@@ -8,3 +8,4 @@
 | 布局 | src/core/layout.ts | 等比缩放 + 堆叠 + gutter 坐标 | — | 改对齐 / 缩放策略 |
 | 切片 | src/core/slice.ts | gutter 优先分段 + 硬切回退 | layout(类型) | 改分段策略 |
 | 渲染 | src/core/render.ts | 逐段 canvas 绘制(裁剪 drawImage) | Canvas API, layout/slice 类型 | 改绘制 / 水印 |
+| 导出策略 | src/exporters/verticalSlice.ts | 串联 layout+slice+render → Blob[] | core/* | 加导出模式 |
