@@ -9,3 +9,4 @@
 | 切片 | src/core/slice.ts | gutter 优先分段 + 硬切回退 | layout(类型) | 改分段策略 |
 | 渲染 | src/core/render.ts | 逐段 canvas 绘制(裁剪 drawImage) | Canvas API, layout/slice 类型 | 改绘制 / 水印 |
 | 导出策略 | src/exporters/verticalSlice.ts | 串联 layout+slice+render → Blob[] | core/* | 加导出模式 |
+| 打包 | src/pack/zip.ts | JSZip 命名打包 → ArrayBuffer | JSZip | 改命名 / 格式 |
