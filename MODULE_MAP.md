@@ -12,3 +12,5 @@
 | 打包 | src/pack/zip.ts | JSZip 命名打包 → ArrayBuffer | JSZip | 改命名 / 格式 |
 | 平台胶水 | src/platform/*.ts | 浏览器图解码 / canvas 工厂 / 文件校验 | Canvas/DOM API | 改浏览器交互 |
 | 下载 | src/pack/download.ts | ArrayBuffer 触发下载 | DOM API | 改下载行为 |
+| 工具 UI | src/ui/Workspace.tsx | 拖拽/渠道/gutter/水印/预览/导出/成功态 | platform, exporters, pack | 改交互 |
+| 导出编排 | src/ui/useExport.ts | 加载图→段 blob→zip | exporters, pack | 改导出流程 |
