@@ -1,6 +1,9 @@
 import type { LayoutItem, ImageSize } from "./layout";
 import type { Segment } from "./slice";
 
+const WATERMARK_PADDING_LEFT = 16;
+const WATERMARK_TEXT_BASELINE = 38; // baseline offset within WATERMARK_HEIGHT (60px) for 20px font
+
 // Render a single segment onto ctx: white background + drawImage with source clipping
 // for each image whose layout bounds intersect [seg.yStart, seg.yEnd).
 // origSizes[i] is the original pixel dimensions for image i;
@@ -30,7 +33,7 @@ export function renderSegment(
       const dy = visTop - seg.yStart;
       ctx.fillStyle = "#000000";
       ctx.font = "20px sans-serif";
-      ctx.fillText("Formatted by ToonSlice.com", 16, dy + 38);
+      ctx.fillText("Formatted by ToonSlice.com", WATERMARK_PADDING_LEFT, dy + WATERMARK_TEXT_BASELINE);
       return;
     }
 

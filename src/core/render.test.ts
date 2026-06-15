@@ -78,5 +78,9 @@ describe("renderSegment", () => {
     const calls = (ctx as any).fillText.mock.calls;
     expect(calls.length).toBe(1);
     expect(calls[0][0]).toBe("Formatted by ToonSlice.com");
+    // x = WATERMARK_PADDING_LEFT = 16
+    expect(calls[0][1]).toBe(16);
+    // dy = visTop - yStart = 1000 - 1000 = 0; y = dy + WATERMARK_TEXT_BASELINE = 0 + 38 = 38
+    expect(calls[0][2]).toBe(38);
   });
 });
