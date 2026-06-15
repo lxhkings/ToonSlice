@@ -21,11 +21,15 @@ export interface Layout {
   gutters: GutterGap[];
 }
 
+export const WATERMARK_HEIGHT = 60;
+
 // Scale all images to width, stack vertically, insert gutter gaps between adjacent images.
+// If watermark=true, appends a banner item of WATERMARK_HEIGHT at the end.
 export function computeLayout(
   images: ImageSize[],
   width: number,
-  gutter: number
+  gutter: number,
+  watermark = false
 ): Layout {
   const items: LayoutItem[] = [];
   const gutters: GutterGap[] = [];
@@ -40,5 +44,10 @@ export function computeLayout(
       y += gutter;
     }
   });
+  if (watermark) {
+    if (items.length > 0) gutters.push({ start: y, end: y }); // zero-width cut hint: forces clean cut at banner top
+    items.push({ y, height: WATERMARK_HEIGHT, scale: 1 });
+    y += WATERMARK_HEIGHT;
+  }
   return { width, totalHeight: y, items, gutters };
 }

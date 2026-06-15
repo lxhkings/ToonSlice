@@ -21,12 +21,12 @@ export interface ExportInput {
 }
 
 // Pipeline: layout → slice → per-segment render → toBlob.
-// watermark flag reserved for Task 9 (banner rendering).
+// watermark flag threaded into computeLayout for banner rendering.
 export async function exportVerticalSlice(
   input: ExportInput
 ): Promise<Blob[]> {
-  const { sources, origSizes, spec, gutter, canvasFactory } = input;
-  const layout = computeLayout(origSizes, spec.canvasWidth, gutter);
+  const { sources, origSizes, spec, gutter, watermark, canvasFactory } = input;
+  const layout = computeLayout(origSizes, spec.canvasWidth, gutter, watermark);
   const segments = sliceSegments(
     layout.totalHeight,
     layout.gutters,

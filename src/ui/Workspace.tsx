@@ -50,7 +50,8 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
     const layout = computeLayout(
       items.map((it) => it.size),
       spec.canvasWidth,
-      gutter
+      gutter,
+      watermark
     );
     const tooTall = checkTotalHeight(layout.totalHeight);
     if (tooTall) {
@@ -191,6 +192,7 @@ function SuccessPanel({ spec }: { spec: ChannelSpec }) {
       >
         ☕ Found this useful? Buy me a coffee
       </a>
+      {/* TODO(pre-launch): /go/clip-studio is a placeholder affiliate URL. */}
       <a
         className="underline"
         href="/go/clip-studio"

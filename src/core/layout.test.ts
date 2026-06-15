@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeLayout } from "./layout";
+import { computeLayout, WATERMARK_HEIGHT } from "./layout";
 
 const W = 800;
 
@@ -34,5 +34,27 @@ describe("computeLayout", () => {
       0
     );
     expect(lo.gutters).toEqual([]);
+  });
+
+  it("watermark=true adds WATERMARK_HEIGHT to totalHeight and appends banner item", () => {
+    const images = [{ w: 800, h: 1000 }];
+    const loNo = computeLayout(images, W, 0, false);
+    const loYes = computeLayout(images, W, 0, true);
+    expect(loYes.totalHeight).toBe(loNo.totalHeight + WATERMARK_HEIGHT);
+    const last = loYes.items[loYes.items.length - 1];
+    expect(last.height).toBe(WATERMARK_HEIGHT);
+    expect(last.scale).toBe(1);
+  });
+
+  it("watermark=true inserts zero-width gutter at banner top (clean-cut hint)", () => {
+    // The zero-width gutter ensures sliceSegments can cut cleanly at banner top
+    // so the banner is never split across two segments.
+    const images = [{ w: 800, h: 1000 }];
+    const lo = computeLayout(images, W, 0, true);
+    const bannerTop = lo.totalHeight - WATERMARK_HEIGHT; // = 1000
+    const bannerGutter = lo.gutters.find(
+      (g) => g.start === bannerTop && g.end === bannerTop
+    );
+    expect(bannerGutter).toBeDefined();
   });
 });

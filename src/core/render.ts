@@ -1,5 +1,9 @@
 import type { LayoutItem, ImageSize } from "./layout";
+import { WATERMARK_HEIGHT } from "./layout";
 import type { Segment } from "./slice";
+
+const WATERMARK_PADDING_LEFT = 16;
+const WATERMARK_TEXT_BASELINE = Math.round(WATERMARK_HEIGHT * 0.63); // = 38 for WATERMARK_HEIGHT=60
 
 // Render a single segment onto ctx: white background + drawImage with source clipping
 // for each image whose layout bounds intersect [seg.yStart, seg.yEnd).
@@ -24,6 +28,15 @@ export function renderSegment(
     const visTop = Math.max(top, seg.yStart);
     const visBottom = Math.min(bottom, seg.yEnd);
     if (visBottom <= visTop) return;
+
+    // Banner item (no corresponding source): draw watermark text
+    if (i >= sources.length) {
+      const dy = visTop - seg.yStart;
+      ctx.fillStyle = "#000000";
+      ctx.font = "20px sans-serif";
+      ctx.fillText("Formatted by ToonSlice.com", WATERMARK_PADDING_LEFT, dy + WATERMARK_TEXT_BASELINE);
+      return;
+    }
 
     // source cropping (original pixels): layout→source via 1/scale
     const invScale = origSizes[i].h / it.height; // = 1/scale (via height)
