@@ -25,8 +25,8 @@ export interface ExportInput {
 export async function exportVerticalSlice(
   input: ExportInput
 ): Promise<Blob[]> {
-  const { sources, origSizes, spec, gutter, canvasFactory } = input;
-  const layout = computeLayout(origSizes, spec.canvasWidth, gutter);
+  const { sources, origSizes, spec, gutter, watermark, canvasFactory } = input;
+  const layout = computeLayout(origSizes, spec.canvasWidth, gutter, watermark);
   const segments = sliceSegments(
     layout.totalHeight,
     layout.gutters,

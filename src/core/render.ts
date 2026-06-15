@@ -25,6 +25,15 @@ export function renderSegment(
     const visBottom = Math.min(bottom, seg.yEnd);
     if (visBottom <= visTop) return;
 
+    // Banner item (no corresponding source): draw watermark text
+    if (i >= sources.length) {
+      const dy = visTop - seg.yStart;
+      ctx.fillStyle = "#000000";
+      ctx.font = "20px sans-serif";
+      ctx.fillText("Formatted by ToonSlice.com", 16, dy + 38);
+      return;
+    }
+
     // source cropping (original pixels): layout→source via 1/scale
     const invScale = origSizes[i].h / it.height; // = 1/scale (via height)
     const sx = 0;
