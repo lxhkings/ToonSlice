@@ -23,13 +23,19 @@
 已 headless 实测(dev + preview 两次):导出全程**零网络请求**,图像不离浏览器。证据见 `zero-upload-evidence.md` + `zero-upload-webtoon.png`。
 
 ### 测试
-23 passed(10 files)。Plan2 新增:watermark layout/render 单测、`verticalSlice.integration.test.ts`(段连续性 + 缩放正确性)。
+27 passed(10 files)。Plan2 新增:watermark layout/render 单测、`verticalSlice.integration.test.ts`(段连续性 + 缩放正确性 + watermark e2e 三例)。
+
+### 终审发现并修复的两处 Critical
+- **预检高度漏传 watermark**:`Workspace.onExport` 预检 `computeLayout` 未传 watermark,水印开时 30000px 防护少算 60px → 已修(传入 watermark)。
+- **banner 被硬切割**:`sliceSegments` 不感知 banner,webtoon 内容高 ~1220–1280px 时硬切点落进 banner → 已修(layout 在 banner 顶插零宽 gutter 强制干净切点,banner 永不被切;新增 e2e 断言覆盖)。
 
 ## Plan2 改动
 - `feat(accept): watermark banner render`(29d93d9)— HANDOFF 缺口②消除
 - `refactor(accept): extract watermark constants`(a35d502)
 - `test(accept): segment continuity and scaling correctness`(6600261)
 - `test(accept): zero-upload + edge-case headless evidence; mark affiliate TODOs`(c11420c)
+- `docs(accept): MVP delivery report`(b0ef7a4)
+- `fix(accept): watermark height guard + slice-aware banner; derive baseline; e2e watermark test`(e657116)
 
 ## 上线前必补(非阻断 MVP 交付)
 - **重排(reorder)**:当前上传 append-only,无拖拽排序。spec §9.2 要求,需补。
