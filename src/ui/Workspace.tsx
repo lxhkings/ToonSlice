@@ -192,17 +192,6 @@ function SuccessPanel({ spec }: { spec: ChannelSpec }) {
       >
         ☕ Found this useful? Buy me a coffee
       </a>
-      {/* TODO(pre-launch): /go/clip-studio is a placeholder affiliate URL. */}
-      <a
-        className="underline"
-        href="/go/clip-studio"
-        rel="sponsored nofollow"
-      >
-        🎨 Next: color your comic with Clip Studio Paint
-      </a>
-      <p className="text-sm">
-        Also posting to Instagram? Try the IG version (coming soon).
-      </p>
     </div>
   );
 }
