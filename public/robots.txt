@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://toonslice.com/sitemap.xml
