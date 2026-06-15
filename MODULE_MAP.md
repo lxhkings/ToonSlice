@@ -7,3 +7,4 @@
 | 渠道注册 | src/channels/*.ts | 各渠道规格 + SEO 数据 | — | 加渠道 / 改规格 |
 | 布局 | src/core/layout.ts | 等比缩放 + 堆叠 + gutter 坐标 | — | 改对齐 / 缩放策略 |
 | 切片 | src/core/slice.ts | gutter 优先分段 + 硬切回退 | layout(类型) | 改分段策略 |
+| 渲染 | src/core/render.ts | 逐段 canvas 绘制(裁剪 drawImage) | Canvas API, layout/slice 类型 | 改绘制 / 水印 |
