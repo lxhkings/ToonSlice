@@ -16,3 +16,4 @@
 | 导出编排 | src/ui/useExport.ts | 加载图→段 blob→zip | exporters, pack | 改导出流程 |
 | 渠道页 | src/ui/ChannelPage.tsx | 落地工具+规格说明+联盟位+SEO meta | Workspace | 改落地页/SEO |
 | 路由 | src/App.tsx | 渠道路由映射 | channels, ChannelPage | 加渠道页 |
+| 上限 | src/core/limits.ts | 总高上限校验 | — | 改防护阈值 |

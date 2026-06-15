@@ -9,6 +9,8 @@ import {
 import { browserCanvasFactory } from "../platform/browserCanvas";
 import { runExport } from "./useExport";
 import { downloadZip } from "../pack/download";
+import { computeLayout } from "../core/layout";
+import { checkTotalHeight } from "../core/limits";
 
 type Status =
   | { kind: "idle" }
@@ -44,6 +46,17 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
 
   async function onExport() {
     if (items.length === 0 || carouselComingSoon) return;
+    // pre-check total height before running expensive canvas pipeline
+    const layout = computeLayout(
+      items.map((it) => it.size),
+      spec.canvasWidth,
+      gutter
+    );
+    const tooTall = checkTotalHeight(layout.totalHeight);
+    if (tooTall) {
+      setStatus({ kind: "error", msg: "TOO_TALL: reduce images" });
+      return;
+    }
     setStatus({ kind: "working" });
     try {
       const buf = await runExport(
