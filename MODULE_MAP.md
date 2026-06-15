@@ -10,3 +10,5 @@
 | 渲染 | src/core/render.ts | 逐段 canvas 绘制(裁剪 drawImage) | Canvas API, layout/slice 类型 | 改绘制 / 水印 |
 | 导出策略 | src/exporters/verticalSlice.ts | 串联 layout+slice+render → Blob[] | core/* | 加导出模式 |
 | 打包 | src/pack/zip.ts | JSZip 命名打包 → ArrayBuffer | JSZip | 改命名 / 格式 |
+| 平台胶水 | src/platform/*.ts | 浏览器图解码 / canvas 工厂 / 文件校验 | Canvas/DOM API | 改浏览器交互 |
+| 下载 | src/pack/download.ts | ArrayBuffer 触发下载 | DOM API | 改下载行为 |
