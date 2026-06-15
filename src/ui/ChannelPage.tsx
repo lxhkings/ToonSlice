@@ -41,6 +41,9 @@ export function ChannelPage({ spec }: { spec: ChannelSpec }) {
       </section>
 
       {/* Affiliate slot — rel=sponsored nofollow + FTC disclosure */}
+      {/* TODO(pre-launch): /go/* are placeholders; wire to real affiliate URLs
+          (XP-Pen / Amazon) after account approval. Until then they fall through
+          App.tsx "*" → redirect home. See delivery report "上线前必补". */}
       <aside className="text-sm text-gray-500 border-t pt-4">
         <p>Recommended gear for comic artists:</p>
         <a

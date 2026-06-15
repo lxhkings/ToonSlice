@@ -191,6 +191,7 @@ function SuccessPanel({ spec }: { spec: ChannelSpec }) {
       >
         ☕ Found this useful? Buy me a coffee
       </a>
+      {/* TODO(pre-launch): /go/clip-studio is a placeholder affiliate URL. */}
       <a
         className="underline"
         href="/go/clip-studio"
