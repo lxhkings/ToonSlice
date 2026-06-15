@@ -19,7 +19,7 @@ describe("exportVerticalSlice", () => {
     // two images, each 1600x3000 → scaled to 800x1500, gutter 40 → total 3040
     const sources = [napiImg(1600, 3000), napiImg(1600, 3000)];
     const blobs = await exportVerticalSlice({
-      sources: sources.map((s) => s.image),
+      sources: sources.map((s) => s.image as unknown as CanvasImageSource),
       origSizes: sources.map(() => ({ w: 1600, h: 3000 })),
       spec,
       gutter: 40,
