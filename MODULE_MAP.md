@@ -8,12 +8,13 @@
 | 布局 | src/core/layout.ts | 等比缩放 + 堆叠 + gutter 坐标；watermark=true 时在 banner 顶插入零宽 gutter，确保 banner 不被切割 | — | 改对齐 / 缩放策略 |
 | 切片 | src/core/slice.ts | gutter 优先分段 + 硬切回退；零宽 gutter midpoint=bannerTop 使 banner 始终完整落入末段 | layout(类型) | 改分段策略 |
 | 渲染 | src/core/render.ts | 逐段 canvas 绘制(裁剪 drawImage);水印 banner 实绘 | Canvas API, layout/slice 类型 | 改绘制 / 水印 |
-| 导出策略 | src/exporters/verticalSlice.ts | 串联 layout+slice+render → Blob[] | core/* | 加导出模式 |
+| 导出策略 | src/exporters/verticalSlice.ts | 串联 layout+slice+render → Blob[]（默认垂直滚动导出） | core/* | 加导出模式 |
+| 导出策略(轮播) | src/exporters/carouselSlice.ts | 复用 layout+slice，按 aspect 算 pageHeight，每段 pad 到统一画布尺寸 → Blob[] | core/*, exporters/verticalSlice.ts(CanvasFactory 类型) | 改画幅 / 轮播张数上限 |
 | 打包 | src/pack/zip.ts | JSZip 命名打包 → ArrayBuffer | JSZip | 改命名 / 格式 |
 | 平台胶水 | src/platform/*.ts | 浏览器图解码 / canvas 工厂 / 文件校验 | Canvas/DOM API | 改浏览器交互 |
 | 下载 | src/pack/download.ts | ArrayBuffer 触发下载 | DOM API | 改下载行为 |
-| 工具 UI | src/ui/Workspace.tsx | 拖拽/渠道/gutter/水印/预览/导出/成功态 | platform, exporters, pack | 改交互 |
+| 工具 UI | src/ui/Workspace.tsx | 拖拽/渠道/gutter/水印/轮播画幅/预览/导出/成功态 | platform, exporters, pack | 改交互 |
 | 导出编排 | src/ui/useExport.ts | 加载图→段 blob→zip | exporters, pack | 改导出流程 |
 | 渠道页 | src/ui/ChannelPage.tsx | 落地工具+规格说明+联盟位+SEO meta | Workspace | 改落地页/SEO |
 | 路由 | src/App.tsx | 渠道路由映射 | channels, ChannelPage | 加渠道页 |
-| 上限 | src/core/limits.ts | 总高上限校验 | — | 改防护阈值 |
+| 上限 | src/core/limits.ts | 总高上限校验 + 轮播张数上限(10) | — | 改防护阈值 |
