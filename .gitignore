@@ -3,3 +3,6 @@ dist
 .DS_Store
 .gstack/
 .vercel
+stitch_toonslice_ui_redesign_one/
+.codegraph/
+CLAUDE.md
