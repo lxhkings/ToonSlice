@@ -97,7 +97,7 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
     <section className="w-full flex flex-col lg:flex-row gap-8 items-stretch relative">
       {/* Left: Drop zone */}
       <div className="flex-grow w-full lg:w-2/3">
-        <div className="h-full bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-8 flex flex-col items-center justify-center gap-6 relative overflow-hidden">
+        <div className="h-full min-h-0 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-8 flex flex-col items-center justify-center gap-6 relative overflow-hidden">
           <div
             className="w-full h-full min-h-[400px] border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center p-8 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
             onDragOver={(e) => e.preventDefault()}
@@ -127,7 +127,7 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
                 {items.map((it, i) => (
                   <div
                     key={i}
-                    className="w-full max-w-xs flex flex-col items-center"
+                    className="w-full flex flex-col items-center"
                   >
                     <img
                       src={it.url}
