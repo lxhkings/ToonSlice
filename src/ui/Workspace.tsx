@@ -10,7 +10,12 @@ import { browserCanvasFactory } from "../platform/browserCanvas";
 import { runExport } from "./useExport";
 import { downloadZip } from "../pack/download";
 import { computeLayout } from "../core/layout";
-import { checkTotalHeight } from "../core/limits";
+import { sliceSegments } from "../core/slice";
+import { checkTotalHeight, checkCarouselPages } from "../core/limits";
+import {
+  pageHeightFor,
+  type CarouselAspect,
+} from "../exporters/carouselSlice";
 
 type Status =
   | { kind: "idle" }
@@ -23,8 +28,9 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
   const [items, setItems] = useState<LoadedImage[]>([]);
   const [gutter, setGutter] = useState(40);
   const [watermark, setWatermark] = useState(true);
+  const [aspect, setAspect] = useState<CarouselAspect>("4:5");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
-  const carouselComingSoon = spec.exporter === "carouselPage";
+  const isCarousel = spec.exporter === "carouselPage";
 
   async function addFiles(files: FileList | null) {
     if (!files) return;
@@ -45,7 +51,7 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
   }
 
   async function onExport() {
-    if (items.length === 0 || carouselComingSoon) return;
+    if (items.length === 0) return;
     // pre-check total height before running expensive canvas pipeline
     const layout = computeLayout(
       items.map((it) => it.size),
@@ -58,6 +64,18 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
       setStatus({ kind: "error", msg: "TOO_TALL: reduce images" });
       return;
     }
+    if (isCarousel) {
+      const pageHeight = pageHeightFor(spec.canvasWidth, aspect);
+      const segments = sliceSegments(layout.totalHeight, layout.gutters, pageHeight);
+      const tooMany = checkCarouselPages(segments.length);
+      if (tooMany) {
+        setStatus({
+          kind: "error",
+          msg: "TOO_MANY_SLIDES: reduce images or raise gutter",
+        });
+        return;
+      }
+    }
     setStatus({ kind: "working" });
     try {
       const buf = await runExport(
@@ -65,7 +83,8 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
         spec,
         gutter,
         watermark,
-        browserCanvasFactory
+        browserCanvasFactory,
+        aspect
       );
       downloadZip(buf, `toonslice-${spec.id}.zip`);
       setStatus({ kind: "done" });
@@ -132,6 +151,21 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
         Viral watermark
       </label>
 
+      {/* Carousel aspect toggle — only shown for carouselPage exporters */}
+      {isCarousel && (
+        <label className="flex gap-2 items-center">
+          Card aspect:
+          <select
+            className="border rounded p-1"
+            value={aspect}
+            onChange={(e) => setAspect(e.target.value as CarouselAspect)}
+          >
+            <option value="4:5">4:5 (1080×1350)</option>
+            <option value="1:1">1:1 (1080×1080)</option>
+          </select>
+        </label>
+      )}
+
       {/* CSS preview */}
       <div
         className="border rounded p-2 max-h-96 overflow-auto bg-gray-50"
@@ -155,19 +189,11 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
 
       {/* Export */}
       <button
-        disabled={
-          items.length === 0 ||
-          carouselComingSoon ||
-          status.kind === "working"
-        }
+        disabled={items.length === 0 || status.kind === "working"}
         onClick={onExport}
         className="bg-black text-white rounded p-3 disabled:opacity-40"
       >
-        {carouselComingSoon
-          ? "Carousel export — coming soon"
-          : status.kind === "working"
-            ? "Exporting…"
-            : "Export ZIP"}
+        {status.kind === "working" ? "Exporting…" : "Export ZIP"}
       </button>
 
       {status.kind === "error" && (
