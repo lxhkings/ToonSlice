@@ -94,124 +94,211 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* Channel selector */}
-      <select
-        className="border rounded p-2 w-48"
-        value={spec.id}
-        onChange={(e) => setSpec(channels[e.target.value])}
-      >
-        {Object.values(channels).map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.label}
-          </option>
-        ))}
-      </select>
-
-      {/* Drag / upload */}
-      <div
-        className="border-2 border-dashed rounded p-8 text-center text-gray-500"
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          e.preventDefault();
-          addFiles(e.dataTransfer.files);
-        }}
-      >
-        {items.length === 0
-          ? "Drag comic panels here"
-          : `${items.length} image(s)`}
-        <div className="mt-2">
-          <input
-            type="file"
-            multiple
-            accept="image/png,image/jpeg,image/webp"
-            onChange={(e) => addFiles(e.target.files)}
-          />
-        </div>
-      </div>
-
-      {/* Gutter + watermark */}
-      <label>
-        Gutter: {gutter}px
-        <input
-          type="range"
-          min={0}
-          max={400}
-          value={gutter}
-          onChange={(e) => setGutter(Number(e.target.value))}
-          className="w-full"
-        />
-      </label>
-      <label className="flex gap-2 items-center">
-        <input
-          type="checkbox"
-          checked={watermark}
-          onChange={(e) => setWatermark(e.target.checked)}
-        />
-        Viral watermark
-      </label>
-
-      {/* Carousel aspect toggle — only shown for carouselPage exporters */}
-      {isCarousel && (
-        <label className="flex gap-2 items-center">
-          Card aspect:
-          <select
-            className="border rounded p-1"
-            value={aspect}
-            onChange={(e) => setAspect(e.target.value as CarouselAspect)}
+    <section className="w-full flex flex-col lg:flex-row gap-8 items-stretch relative">
+      {/* Left: Drop zone */}
+      <div className="flex-grow w-full lg:w-2/3">
+        <div className="h-full bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-8 flex flex-col items-center justify-center gap-6 relative overflow-hidden">
+          <div
+            className="w-full h-full min-h-[400px] border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center p-8 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              addFiles(e.dataTransfer.files);
+            }}
           >
-            <option value="4:5">4:5 (1080×1350)</option>
-            <option value="1:1">1:1 (1080×1080)</option>
-          </select>
-        </label>
-      )}
-
-      {/* CSS preview */}
-      <div
-        className="border rounded p-2 max-h-96 overflow-auto bg-gray-50"
-        style={{ width: 240 }}
-      >
-        <div className="flex flex-col items-center">
-          {items.map((it, i) => (
-            <img
-              key={i}
-              src={it.url}
-              alt=""
-              style={{
-                width: "100%",
-                marginBottom:
-                  i < items.length - 1 ? gutter / 4 : 0,
-              }}
-            />
-          ))}
+            {items.length === 0 ? (
+              <>
+                <div className="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-2 shadow-sm">
+                  <span className="material-symbols-outlined text-4xl">
+                    cut
+                  </span>
+                </div>
+                <div className="text-center flex flex-col gap-2">
+                  <p className="font-headline-md text-body-md text-on-surface font-semibold">
+                    Drag &amp; Drop Comic Pages Here
+                  </p>
+                  <p className="font-body-sm text-body-sm text-on-surface-variant">
+                    or click to browse files (JPG, PNG, WebP)
+                  </p>
+                </div>
+              </>
+            ) : (
+              <div className="w-full max-h-[500px] overflow-auto flex flex-col items-center gap-2 px-4">
+                {items.map((it, i) => (
+                  <div
+                    key={i}
+                    className="w-full max-w-xs flex flex-col items-center"
+                  >
+                    <img
+                      src={it.url}
+                      alt=""
+                      className="w-full rounded border border-outline-variant"
+                    />
+                    <span className="font-utility-mono text-utility-mono text-on-surface-variant mt-1">
+                      panel-{i + 1}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <label className="mt-4 px-6 py-2 bg-primary text-on-primary rounded font-label-caps text-label-caps shadow-sm hover:bg-primary-container hover:text-on-primary-container transition-colors cursor-pointer">
+              Select Files
+              <input
+                type="file"
+                multiple
+                accept="image/png,image/jpeg,image/webp"
+                className="hidden"
+                onChange={(e) => addFiles(e.target.files)}
+              />
+            </label>
+          </div>
         </div>
       </div>
 
-      {/* Export */}
-      <button
-        disabled={items.length === 0 || status.kind === "working"}
-        onClick={onExport}
-        className="bg-black text-white rounded p-3 disabled:opacity-40"
-      >
-        {status.kind === "working" ? "Exporting…" : "Export ZIP"}
-      </button>
+      {/* Right: Sidebar */}
+      <aside className="w-full lg:w-1/3 flex flex-col gap-6 shrink-0">
+        {/* Slicing Controls */}
+        <div className="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm flex flex-col gap-5">
+          <h3 className="font-headline-md text-lg text-on-surface font-semibold border-b border-outline-variant pb-3">
+            Slicing Controls
+          </h3>
 
-      {status.kind === "error" && (
-        <p className="text-red-600">{status.msg}</p>
-      )}
-      {status.kind === "done" && <SuccessPanel spec={spec} />}
-    </div>
+          <label className="flex flex-col gap-1">
+            <span className="font-label-caps text-label-caps text-on-surface-variant">
+              Channel
+            </span>
+            <select
+              className="border border-outline-variant rounded p-2 bg-surface-container-lowest text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+              value={spec.id}
+              onChange={(e) => setSpec(channels[e.target.value])}
+            >
+              {Object.values(channels).map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <div className="flex flex-col gap-3">
+            <label className="font-label-caps text-label-caps text-on-surface-variant flex justify-between items-center">
+              Gutter Adjustment
+              <span className="font-utility-mono text-primary font-bold bg-primary-fixed/50 px-2 py-0.5 rounded">
+                {gutter}px
+              </span>
+            </label>
+            <input
+              className="w-full accent-primary"
+              max={400}
+              min={0}
+              type="range"
+              value={gutter}
+              onChange={(e) => setGutter(Number(e.target.value))}
+            />
+          </div>
+
+          <div className="flex items-center gap-3 mt-2">
+            <input
+              className="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary"
+              id="watermark"
+              type="checkbox"
+              checked={watermark}
+              onChange={(e) => setWatermark(e.target.checked)}
+            />
+            <label
+              className="font-body-sm text-on-surface cursor-pointer select-none"
+              htmlFor="watermark"
+            >
+              Viral watermark
+            </label>
+          </div>
+
+          {isCarousel && (
+            <label className="flex flex-col gap-1">
+              <span className="font-label-caps text-label-caps text-on-surface-variant">
+                Card Aspect
+              </span>
+              <select
+                className="border border-outline-variant rounded p-2 bg-surface-container-lowest text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                value={aspect}
+                onChange={(e) => setAspect(e.target.value as CarouselAspect)}
+              >
+                <option value="4:5">4:5 (1080×1350)</option>
+                <option value="1:1">1:1 (1080×1080)</option>
+              </select>
+            </label>
+          )}
+
+          <button
+            disabled={items.length === 0 || status.kind === "working"}
+            onClick={onExport}
+            className="w-full mt-4 bg-primary text-on-primary px-4 py-3 rounded font-label-caps text-label-caps flex items-center justify-center gap-2 hover:bg-primary-container hover:text-on-primary-container transition-colors shadow-sm active:scale-[0.98] disabled:opacity-40"
+          >
+            <span className="material-symbols-outlined text-lg">
+              folder_zip
+            </span>
+            {status.kind === "working" ? "Exporting…" : "Export ZIP"}
+          </button>
+
+          {status.kind === "error" && (
+            <p className="text-error font-body-sm text-body-sm">
+              {status.msg}
+            </p>
+          )}
+          {status.kind === "done" && <SuccessPanel spec={spec} />}
+        </div>
+
+        {/* Tech Specs Info Box */}
+        <div className="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl shadow-sm flex flex-col gap-4">
+          <h3 className="font-headline-md text-lg text-on-surface font-semibold flex items-center gap-2 border-b border-outline-variant pb-3">
+            <span className="material-symbols-outlined text-primary text-xl">
+              info
+            </span>
+            {spec.label} Image Specs
+          </h3>
+          <ul className="flex flex-col gap-3 font-body-sm text-body-sm text-on-surface-variant">
+            <li className="flex justify-between border-b border-outline-variant/30 pb-2">
+              <span>Recommended Width</span>
+              <span className="font-utility-mono font-semibold text-on-surface">
+                {spec.canvasWidth}px
+              </span>
+            </li>
+            <li className="flex justify-between border-b border-outline-variant/30 pb-2">
+              <span>Max Panel Height</span>
+              <span className="font-utility-mono font-semibold text-on-surface">
+                {spec.maxSegmentHeight}px
+              </span>
+            </li>
+            <li className="flex justify-between pb-1">
+              <span>Format</span>
+              <span className="font-utility-mono font-semibold text-on-surface">
+                {spec.format.split("/")[1].toUpperCase()}
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        {/* Functional Context */}
+        <div className="bg-secondary-fixed border border-outline-variant/50 p-5 rounded-lg shadow-sm">
+          <p className="font-body-sm text-body-sm text-on-secondary-container leading-relaxed">
+            {spec.label} renders long-form comics as vertically stacked
+            panels. ToonSlice aligns every image to {spec.canvasWidth}px wide
+            and slices at gutter gaps so panels break cleanly.
+          </p>
+        </div>
+      </aside>
+    </section>
   );
 }
 
 function SuccessPanel({ spec }: { spec: ChannelSpec }) {
   return (
-    <div className="border rounded p-4 bg-green-50 flex flex-col gap-2">
-      <p className="font-semibold">
+    <div className="border border-outline-variant rounded-lg p-4 bg-surface-container-low flex flex-col gap-2">
+      <p className="font-body-sm text-body-sm text-on-surface font-semibold">
         Done! Your {spec.label} panels are downloading.
       </p>
       <a
-        className="underline"
+        className="font-body-sm text-body-sm text-primary underline"
         href="https://ko-fi.com/toonslice"
         target="_blank"
         rel="noopener"
