@@ -4,12 +4,19 @@ import { computeLayout } from "../core/layout";
 import { sliceSegments } from "../core/slice";
 import { renderSegment } from "../core/render";
 
+export type ExportFormat = "image/png" | "image/jpeg";
+
 export interface CanvasHandle {
   ctx: CanvasRenderingContext2D;
   toBlob: () => Promise<Blob>;
 }
 
-export type CanvasFactory = (w: number, h: number) => CanvasHandle;
+export type CanvasFactory = (
+  w: number,
+  h: number,
+  format: ExportFormat,
+  quality: number
+) => CanvasHandle;
 
 export interface ExportInput {
   sources: CanvasImageSource[];
@@ -18,6 +25,8 @@ export interface ExportInput {
   gutter: number;
   watermark: boolean;
   canvasFactory: CanvasFactory;
+  format: ExportFormat;
+  quality: number;
 }
 
 // Pipeline: layout → slice → per-segment render → toBlob.
@@ -25,7 +34,16 @@ export interface ExportInput {
 export async function exportVerticalSlice(
   input: ExportInput
 ): Promise<Blob[]> {
-  const { sources, origSizes, spec, gutter, watermark, canvasFactory } = input;
+  const {
+    sources,
+    origSizes,
+    spec,
+    gutter,
+    watermark,
+    canvasFactory,
+    format,
+    quality,
+  } = input;
   const layout = computeLayout(origSizes, spec.canvasWidth, gutter, watermark);
   const segments = sliceSegments(
     layout.totalHeight,
@@ -36,7 +54,7 @@ export async function exportVerticalSlice(
   const blobs: Blob[] = [];
   for (const seg of segments) {
     const h = seg.yEnd - seg.yStart;
-    const handle = canvasFactory(spec.canvasWidth, h);
+    const handle = canvasFactory(spec.canvasWidth, h, format, quality);
     renderSegment(
       handle.ctx,
       seg,

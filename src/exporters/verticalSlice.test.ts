@@ -25,6 +25,8 @@ describe("exportVerticalSlice", () => {
       gutter: 40,
       watermark: false,
       canvasFactory: napiFactory,
+      format: "image/jpeg",
+      quality: 0.9,
     });
     expect(blobs.length).toBeGreaterThanOrEqual(3); // 3040 / 1280 ≈ 3 segments
     blobs.forEach((b) => expect(b.size).toBeGreaterThan(0));
