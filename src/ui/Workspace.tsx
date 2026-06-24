@@ -123,7 +123,7 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
             className={
               items.length === 0
                 ? "w-full h-full min-h-[400px] border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center p-8 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
-                : "w-full border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-stretch justify-start p-3 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
+                : "w-full min-h-[400px] border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-stretch justify-start p-3 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
             }
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
