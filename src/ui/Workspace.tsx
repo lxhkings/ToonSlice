@@ -103,21 +103,21 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
   }
 
   return (
-    <section className="w-full flex flex-col lg:flex-row gap-8 items-start relative">
+    <section className="w-full flex flex-col lg:flex-row gap-8 items-stretch relative">
       {/* Left: Drop zone */}
       <div className="flex-grow w-full lg:w-2/3">
         <div
           className={
             items.length === 0
-              ? "bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-8 flex flex-col items-center justify-center gap-6 relative overflow-hidden"
-              : "bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-3 flex flex-col items-stretch gap-6 relative overflow-hidden"
+              ? "h-full bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-8 flex flex-col items-center justify-center gap-6 relative overflow-hidden"
+              : "h-full bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-3 flex flex-col items-stretch gap-6 relative overflow-hidden"
           }
         >
           <div
             className={
               items.length === 0
-                ? "w-full h-[70vh] min-h-[400px] border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center p-8 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
-                : "w-full h-[70vh] min-h-[400px] border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-stretch justify-start p-3 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
+                ? "w-full h-full min-h-[400px] border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center p-8 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
+                : "w-full h-full min-h-[400px] overflow-hidden border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-stretch justify-start p-3 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
             }
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
