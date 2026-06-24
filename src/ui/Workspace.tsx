@@ -106,9 +106,19 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
     <section className="w-full flex flex-col lg:flex-row gap-8 items-stretch relative">
       {/* Left: Drop zone */}
       <div className="flex-grow w-full lg:w-2/3">
-        <div className="h-full min-h-0 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-8 flex flex-col items-center justify-center gap-6 relative overflow-hidden">
+        <div
+          className={
+            items.length === 0
+              ? "h-full min-h-0 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-8 flex flex-col items-center justify-center gap-6 relative overflow-hidden"
+              : "h-full min-h-0 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-3 flex flex-col items-stretch gap-6 relative overflow-hidden"
+          }
+        >
           <div
-            className="w-full h-full min-h-[400px] border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center p-8 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
+            className={
+              items.length === 0
+                ? "w-full h-full min-h-[400px] border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-center justify-center p-8 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
+                : "w-full h-full min-h-[400px] border-2 border-dashed border-outline-variant rounded-lg flex flex-col items-stretch justify-start p-3 gap-4 bg-surface transition-colors duration-200 cursor-pointer hover:border-primary relative z-10"
+            }
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
               e.preventDefault();
@@ -132,7 +142,7 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
                 </div>
               </>
             ) : (
-              <div className="w-full max-h-[500px] overflow-auto flex flex-col items-center gap-2 px-4">
+              <div className="w-full max-h-[500px] overflow-auto flex flex-col items-center gap-2">
                 {items.map((it, i) => (
                   <div
                     key={i}
@@ -150,7 +160,7 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
                 ))}
               </div>
             )}
-            <label className="mt-4 px-6 py-2 bg-primary text-on-primary rounded font-label-caps text-label-caps shadow-sm hover:bg-primary-container hover:text-on-primary-container transition-colors cursor-pointer">
+            <label className="self-center mt-4 px-6 py-2 bg-primary text-on-primary rounded font-label-caps text-label-caps shadow-sm hover:bg-primary-container hover:text-on-primary-container transition-colors cursor-pointer">
               Select Files
               <input
                 type="file"
