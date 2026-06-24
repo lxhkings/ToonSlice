@@ -45,6 +45,8 @@ describe("watermark=true end-to-end", () => {
       gutter: 0,
       watermark: true,
       canvasFactory: capturingFactory(dims),
+      format: "image/png",
+      quality: 1,
     });
 
     // totalHeight = 1250 (content) + 60 (banner) = 1310
@@ -66,6 +68,8 @@ describe("watermark=true end-to-end", () => {
       gutter: 0,
       watermark: true,
       canvasFactory: capturingFactory(dims),
+      format: "image/png",
+      quality: 1,
     });
 
     // Reconstruct segment boundaries from captured dims
@@ -104,6 +108,8 @@ describe("watermark=true end-to-end", () => {
       gutter: 0,
       watermark: true,
       canvasFactory: capturingFactory(dims),
+      format: "image/png",
+      quality: 1,
     });
 
     const expectedTotalHeight = 3060; // 3000 + 60
@@ -138,6 +144,8 @@ describe("segment continuity and scaling correctness", () => {
       gutter: 0,
       watermark: false,
       canvasFactory: capturingFactory(dims),
+      format: "image/png",
+      quality: 1,
     });
 
     // 800x3000 at W=800 → scale=1 → scaled height=3000
@@ -161,6 +169,8 @@ describe("segment continuity and scaling correctness", () => {
       gutter: 0,
       watermark: false,
       canvasFactory: capturingFactory(dimsA),
+      format: "image/png",
+      quality: 1,
     });
 
     const dimsB: { w: number; h: number }[] = [];
@@ -172,6 +182,8 @@ describe("segment continuity and scaling correctness", () => {
       gutter: 0,
       watermark: false,
       canvasFactory: capturingFactory(dimsB),
+      format: "image/png",
+      quality: 1,
     });
 
     const sumA = dimsA.reduce((s, d) => s + d.h, 0);

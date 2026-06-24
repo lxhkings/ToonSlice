@@ -8,6 +8,7 @@ import {
 } from "../platform/loadImage";
 import { browserCanvasFactory } from "../platform/browserCanvas";
 import { runExport } from "./useExport";
+import type { ExportFormat } from "../exporters/verticalSlice";
 import { downloadZip } from "../pack/download";
 import { computeLayout } from "../core/layout";
 import { sliceSegments } from "../core/slice";
@@ -23,12 +24,17 @@ type Status =
   | { kind: "done" }
   | { kind: "error"; msg: string };
 
+const X_EXPORT_SIZE_LIMIT_BYTES = 5 * 1024 * 1024;
+
 export function Workspace({ preset }: { preset: ChannelSpec }) {
   const [spec, setSpec] = useState<ChannelSpec>(preset);
   const [items, setItems] = useState<LoadedImage[]>([]);
   const [gutter, setGutter] = useState(40);
   const [watermark, setWatermark] = useState(true);
   const [aspect, setAspect] = useState<CarouselAspect>("4:5");
+  const [format, setFormat] = useState<ExportFormat>("image/jpeg");
+  const [quality, setQuality] = useState(0.9);
+  const [panelSizes, setPanelSizes] = useState<number[]>([]);
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const isCarousel = spec.exporter === "carouselPage";
 
@@ -78,15 +84,18 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
     }
     setStatus({ kind: "working" });
     try {
-      const buf = await runExport(
+      const { buf, sizes } = await runExport(
         items,
         spec,
         gutter,
         watermark,
         browserCanvasFactory,
-        aspect
+        aspect,
+        format,
+        quality
       );
       downloadZip(buf, `toonslice-${spec.id}.zip`);
+      setPanelSizes(sizes);
       setStatus({ kind: "done" });
     } catch (e) {
       setStatus({ kind: "error", msg: (e as Error).message });
@@ -213,6 +222,40 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
             </label>
           </div>
 
+          <label className="flex flex-col gap-1">
+            <span className="font-label-caps text-label-caps text-on-surface-variant">
+              Export Format
+            </span>
+            <select
+              className="border border-outline-variant rounded p-2 bg-surface-container-lowest text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+              value={format}
+              onChange={(e) => setFormat(e.target.value as ExportFormat)}
+            >
+              <option value="image/jpeg">JPEG</option>
+              <option value="image/png">PNG</option>
+            </select>
+          </label>
+
+          {format === "image/jpeg" && (
+            <div className="flex flex-col gap-3">
+              <label className="font-label-caps text-label-caps text-on-surface-variant flex justify-between items-center">
+                JPEG Quality
+                <span className="font-utility-mono text-primary font-bold bg-primary-fixed/50 px-2 py-0.5 rounded">
+                  {quality.toFixed(2)}
+                </span>
+              </label>
+              <input
+                className="w-full accent-primary"
+                max={1}
+                min={0.7}
+                step={0.05}
+                type="range"
+                value={quality}
+                onChange={(e) => setQuality(Number(e.target.value))}
+              />
+            </div>
+          )}
+
           {isCarousel && (
             <label className="flex flex-col gap-1">
               <span className="font-label-caps text-label-caps text-on-surface-variant">
@@ -245,7 +288,9 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
               {status.msg}
             </p>
           )}
-          {status.kind === "done" && <SuccessPanel spec={spec} />}
+          {status.kind === "done" && (
+            <SuccessPanel spec={spec} sizes={panelSizes} />
+          )}
         </div>
 
         {/* Tech Specs Info Box */}
@@ -291,12 +336,36 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
   );
 }
 
-function SuccessPanel({ spec }: { spec: ChannelSpec }) {
+function SuccessPanel({
+  spec,
+  sizes,
+}: {
+  spec: ChannelSpec;
+  sizes: number[];
+}) {
   return (
     <div className="border border-outline-variant rounded-lg p-4 bg-surface-container-low flex flex-col gap-2">
       <p className="font-body-sm text-body-sm text-on-surface font-semibold">
         Done! Your {spec.label} panels are downloading.
       </p>
+      <ul className="flex flex-col gap-1">
+        {sizes.map((s, i) => {
+          const over = spec.id === "x" && s > X_EXPORT_SIZE_LIMIT_BYTES;
+          return (
+            <li
+              key={i}
+              className={
+                over
+                  ? "font-utility-mono text-utility-mono text-error font-bold"
+                  : "font-utility-mono text-utility-mono text-on-surface-variant"
+              }
+            >
+              panel-{i + 1}: {(s / (1024 * 1024)).toFixed(2)} MB
+              {over ? " — exceeds X's 5MB limit" : ""}
+            </li>
+          );
+        })}
+      </ul>
       <a
         className="font-body-sm text-body-sm text-primary underline"
         href="https://ko-fi.com/toonslice"
