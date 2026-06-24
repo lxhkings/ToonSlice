@@ -142,22 +142,24 @@ export function Workspace({ preset }: { preset: ChannelSpec }) {
                 </div>
               </>
             ) : (
-              <div className="w-full flex-1 min-h-0 overflow-auto flex flex-col items-center gap-2">
-                {items.map((it, i) => (
-                  <div
-                    key={i}
-                    className="w-full flex flex-col items-center"
-                  >
-                    <img
-                      src={it.url}
-                      alt=""
-                      className="w-full rounded border border-outline-variant"
-                    />
-                    <span className="font-utility-mono text-utility-mono text-on-surface-variant mt-1">
-                      panel-{i + 1}
-                    </span>
-                  </div>
-                ))}
+              <div className="relative w-full flex-1 min-h-0">
+                <div className="absolute inset-0 overflow-auto flex flex-col items-center gap-2">
+                  {items.map((it, i) => (
+                    <div
+                      key={i}
+                      className="w-full flex flex-col items-center"
+                    >
+                      <img
+                        src={it.url}
+                        alt=""
+                        className="w-full rounded border border-outline-variant"
+                      />
+                      <span className="font-utility-mono text-utility-mono text-on-surface-variant mt-1">
+                        panel-{i + 1}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
             <label className="self-center mt-4 px-6 py-2 bg-primary text-on-primary rounded font-label-caps text-label-caps shadow-sm hover:bg-primary-container hover:text-on-primary-container transition-colors cursor-pointer">
