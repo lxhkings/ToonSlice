@@ -55,6 +55,8 @@ describe("exportCarouselSlice", () => {
       watermark: false,
       aspect: "4:5",
       canvasFactory: napiFactory,
+      format: "image/jpeg",
+      quality: 0.9,
     });
     expect(blobs.length).toBeGreaterThan(1);
     for (const b of blobs) {
@@ -75,6 +77,8 @@ describe("exportCarouselSlice", () => {
       watermark: false,
       aspect: "1:1",
       canvasFactory: napiFactory,
+      format: "image/jpeg",
+      quality: 0.9,
     });
     for (const b of blobs) {
       const dims = await decodeDims(b);
@@ -99,6 +103,8 @@ describe("exportCarouselSlice", () => {
       watermark: false,
       aspect: "4:5",
       canvasFactory: napiFactory,
+      format: "image/jpeg",
+      quality: 0.9,
     });
     // total 2640 with a gutter cut at 1320 -> 2 slides (1320, 1320), each padded to 1350
     expect(blobs.length).toBe(2);
@@ -119,6 +125,8 @@ describe("exportCarouselSlice", () => {
       watermark: true,
       aspect: "1:1",
       canvasFactory: napiFactory,
+      format: "image/jpeg",
+      quality: 0.9,
     });
     // content 1000 + banner 60 = 1060, well under pageHeight 1080 -> single slide
     expect(blobs.length).toBe(1);

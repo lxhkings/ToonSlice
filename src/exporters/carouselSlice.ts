@@ -3,7 +3,7 @@ import type { ImageSize } from "../core/layout";
 import { computeLayout } from "../core/layout";
 import { sliceSegments } from "../core/slice";
 import { renderSegment } from "../core/render";
-import type { CanvasFactory } from "./verticalSlice";
+import type { CanvasFactory, ExportFormat } from "./verticalSlice";
 
 export type CarouselAspect = "4:5" | "1:1";
 
@@ -25,6 +25,8 @@ export interface CarouselExportInput {
   watermark: boolean;
   aspect: CarouselAspect;
   canvasFactory: CanvasFactory;
+  format: ExportFormat;
+  quality: number;
 }
 
 // Pipeline: layout → slice(maxH = pageHeight) → pad each segment to a uniform
@@ -35,15 +37,24 @@ export interface CarouselExportInput {
 export async function exportCarouselSlice(
   input: CarouselExportInput
 ): Promise<Blob[]> {
-  const { sources, origSizes, spec, gutter, watermark, aspect, canvasFactory } =
-    input;
+  const {
+    sources,
+    origSizes,
+    spec,
+    gutter,
+    watermark,
+    aspect,
+    canvasFactory,
+    format,
+    quality,
+  } = input;
   const pageHeight = pageHeightFor(spec.canvasWidth, aspect);
   const layout = computeLayout(origSizes, spec.canvasWidth, gutter, watermark);
   const segments = sliceSegments(layout.totalHeight, layout.gutters, pageHeight);
 
   const blobs: Blob[] = [];
   for (const seg of segments) {
-    const handle = canvasFactory(spec.canvasWidth, pageHeight);
+    const handle = canvasFactory(spec.canvasWidth, pageHeight, format, quality);
     handle.ctx.fillStyle = "#ffffff";
     handle.ctx.fillRect(0, 0, spec.canvasWidth, pageHeight);
     renderSegment(
